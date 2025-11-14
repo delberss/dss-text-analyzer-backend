@@ -1,5 +1,6 @@
 # imports externos
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from fastapi import HTTPException
@@ -10,6 +11,17 @@ from collections import Counter
 
 # instancia FastAPI
 app = FastAPI(title="Text Analyzer API")
+
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # em produção você troca por domínio fixo
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # modelos Pydantic
 class AnalyzeRequest(BaseModel):
