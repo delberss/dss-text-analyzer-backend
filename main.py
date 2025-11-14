@@ -1,10 +1,17 @@
+# imports externos
 from fastapi import FastAPI
-
-app = FastAPI(title="Text Analyzer API")
-
 from pydantic import BaseModel
 from typing import List, Dict, Any
+from fastapi import HTTPException
 
+# imports padrão do Python
+import re
+from collections import Counter
+
+# instancia FastAPI
+app = FastAPI(title="Text Analyzer API")
+
+# modelos Pydantic
 class AnalyzeRequest(BaseModel):
     text: str
 
@@ -18,12 +25,11 @@ class AnalyzeResponse(BaseModel):
     density: float
     top_words: List[Dict[str, Any]]
 
-import re
-from collections import Counter
-
+# regex helpers
 _WORD_RE = re.compile(r"\b\w+\b", re.UNICODE)
 _SENTENCE_RE = re.compile(r"[.!?]+")
 
+# função principal de análise
 def analyze_text(text: str) -> dict:
     if text is None:
         text = ""
@@ -57,8 +63,7 @@ def analyze_text(text: str) -> dict:
         "top_words": top,
     }
 
-from fastapi import HTTPException
-
+# rota POST /analyze
 @app.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(req: AnalyzeRequest):
     text = req.text
