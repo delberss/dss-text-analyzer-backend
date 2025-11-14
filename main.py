@@ -73,3 +73,7 @@ async def analyze(req: AnalyzeRequest):
 
     result = analyze_text(text)
     return result
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
