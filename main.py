@@ -57,7 +57,14 @@ def analyze_text(text: str) -> dict:
         "top_words": top,
     }
 
+from fastapi import HTTPException
 
-@app.get("/first")
-def health():
-    return {"status": "Funcionando"}
+@app.post("/analyze", response_model=AnalyzeResponse)
+async def analyze(req: AnalyzeRequest):
+    text = req.text
+
+    if not isinstance(text, str):
+        raise HTTPException(status_code=400, detail="text must be a string")
+
+    result = analyze_text(text)
+    return result
