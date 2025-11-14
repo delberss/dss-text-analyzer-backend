@@ -1,29 +1,24 @@
-# imports externos
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from fastapi import HTTPException
 
-# imports padrão do Python
 import re
 from collections import Counter
 
-# instancia FastAPI
 app = FastAPI(title="Text Analyzer API")
 
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # em produção você troca por domínio fixo
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# modelos Pydantic
 class AnalyzeRequest(BaseModel):
     text: str
 
@@ -37,11 +32,9 @@ class AnalyzeResponse(BaseModel):
     density: float
     top_words: List[Dict[str, Any]]
 
-# regex helpers
 _WORD_RE = re.compile(r"\b\w+\b", re.UNICODE)
 _SENTENCE_RE = re.compile(r"[.!?]+")
 
-# função principal de análise
 def analyze_text(text: str) -> dict:
     if text is None:
         text = ""
@@ -75,7 +68,6 @@ def analyze_text(text: str) -> dict:
         "top_words": top,
     }
 
-# rota POST /analyze
 @app.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(req: AnalyzeRequest):
     text = req.text
